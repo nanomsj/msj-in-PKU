@@ -1,0 +1,1362 @@
+
+\documentclass[11pt,a4paper,oneside,openany,fontset=fandol]{ctexbook}
+
+\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=2.7cm,right=2.7cm,headheight=15pt]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs,array,tabularx}
+\usepackage{enumitem}
+\usepackage{xparse}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,decorations.pathmorphing}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{caption}
+
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.15em}
+\setlist{nosep,leftmargin=2.2em}
+\linespread{1.12}
+\pagestyle{plain}
+
+\NewDocumentEnvironment{routebox}{}{
+  \begin{quote}\small\noindent\textbf{主线}\par\medskip
+}{
+  \end{quote}
+}
+\NewDocumentEnvironment{keybox}{O{核心结论}}{
+  \begin{quote}\small\noindent\textbf{#1}\par\medskip
+}{
+  \end{quote}
+}
+\NewDocumentEnvironment{remarkbox}{O{说明}}{
+  \begin{quote}\small\noindent\textbf{#1}\par\medskip
+}{
+  \end{quote}
+}
+\NewDocumentEnvironment{derivationbox}{O{推导}}{
+  \begin{quote}\small\noindent\textbf{#1}\par\medskip
+}{
+  \end{quote}
+}
+
+\definecolor{Ink}{gray}{0}
+\definecolor{Navy}{gray}{0}
+\definecolor{Teal}{gray}{0}
+\definecolor{Gold}{gray}{0}
+\definecolor{SoftBlue}{gray}{1}
+\definecolor{SoftGold}{gray}{1}
+\definecolor{SoftGray}{gray}{1}
+\definecolor{DeepRed}{gray}{0}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\ket}[1]{\left|#1\right\rangle}
+\newcommand{\bra}[1]{\left\langle#1\right|}
+\newcommand{\braket}[2]{\left\langle#1\,\middle|\,#2\right\rangle}
+\newcommand{\avg}[1]{\left\langle #1\right\rangle}
+\newcommand{\pb}[2]{\left\{#1,#2\right\}_{\mathrm{PB}}}
+\newcommand{\vct}[1]{\bm{#1}}
+\newcommand{\mat}[1]{\mathbf{#1}}
+\newcommand{\order}{\mathcal{O}}
+\newcommand{\Wig}{\mathrm{W}}
+
+\begin{document}
+
+
+\begin{titlepage}
+\centering
+\vspace*{4.5cm}
+{\Huge\bfseries 化学中的数学\par}
+\vspace{1cm}
+{\large 刘剑老师课程笔记 \par}
+\vspace{0.5cm}
+{\large nanomsj \par}
+\vspace{0.5cm}
+{\large transformed to \LaTeX by gpt 5.6 Sol\par}
+\vspace{1.5cm}
+{\normalsize \today\par}
+\vfill
+
+\end{titlepage}
+
+\frontmatter
+\tableofcontents
+\vfill
+说明：
+本笔记根据本人在刘剑老师 2026 年暑期课程中的手写课堂笔记整理而成。为便于阅读，手写内容经 GPT 辅助转换为 LaTeX。
+受限于原始笔记的完整性，以及自动识别与转换过程可能产生的偏差（正文未经校对），文中或有错漏及排版问题。如发现任何问题，欢迎在 GitHub 上提交 Issue 或 pr ，亦可发送邮件至 msj@stu.pku.edu.cn 联系我修正。也欢迎通过邮件与我交流课程内容！
+本笔记仅供学习与交流使用。
+\mainmatter
+
+
+\chapter{全局脉络}
+
+\begin{routebox}
+量子--经典联系有两条彼此呼应的路线：
+\[
+\hbar\to 0
+\quad\Longleftrightarrow\quad
+\text{相位快速振荡，驻相路径占主导}
+\]
+以及
+\[
+t=-\ii\hbar\beta
+\quad\Longleftrightarrow\quad
+\text{实时间传播子变为 Boltzmann 算符}.
+\]
+前者把路径积分与经典作用量联系起来，后者把量子统计力学化为虚时间路径积分，并进一步得到环形高分子同构。
+\end{routebox}
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance=8mm and 11mm,
+  box/.style={draw=Navy!75,rounded corners=2mm,fill=SoftBlue,
+              minimum height=9mm,align=center,inner xsep=4mm},
+  arr/.style={-{Latex[length=2.4mm]},thick,color=Gold}
+]
+\node[box] (ham) {Hamilton\\相空间};
+\node[box,right=of ham] (lio) {Liouville\\体积守恒};
+\node[box,right=of lio] (ens) {系综平均\\遍历性};
+\node[box,below=of ham] (lag) {Lagrange\\作用量};
+\node[box,right=of lag] (prop) {量子传播子\\虚时间};
+\node[box,right=of prop] (tro) {Trotter\\短时拆分};
+\node[box,below=of prop] (pi) {路径积分};
+\node[box,left=of pi] (rp) {环形高分子\\PIMD};
+\node[box,right=of pi] (wig) {Wigner\\相空间};
+
+\draw[arr] (ham)--(lio);
+\draw[arr] (lio)--(ens);
+\draw[arr] (ham)--(lag);
+\draw[arr] (lag)--(prop);
+\draw[arr] (prop)--(tro);
+\draw[arr] (tro)--(pi);
+\draw[arr] (pi)--(rp);
+\draw[arr] (pi)--(wig);
+\end{tikzpicture}
+\end{center}
+
+\section{量子表象的并列视角}
+
+量子力学可以采用多种等价表象：
+\[
+\text{矩阵表象},\quad
+\text{波函数表象},\quad
+\text{路径积分表象},\quad
+\text{量子相空间表象},\quad
+\text{量子轨迹表象}.
+\]
+本笔记以波函数表象为起点，经过传播子和路径积分，最后进入 Wigner 相空间表象。
+
+\chapter{量子--经典联系与 Born--Oppenheimer 近似}
+
+\section{$\hbar\to 0$ 的经典极限}
+
+定态量子力学满足
+\[
+\hat H\ket{\phi_n}=E_n\ket{\phi_n}.
+\]
+在位置表象与动量表象中，
+\[
+\braket{\vct r}{\phi}=\phi(\vct r),\qquad
+\braket{\vct p}{\phi}=\widetilde\phi(\vct p).
+\]
+
+经典极限并不是简单地把所有公式中的 $\hbar$ 机械地置零，而是指相对于体系的典型作用量尺度，$\hbar$ 足够小。在 Wigner--Weyl 对应下，
+\[
+\frac{1}{\ii\hbar}[\hat A,\hat B]
+\;\longleftrightarrow\;
+\pb{A_{\Wig}}{B_{\Wig}}+\order(\hbar^2),
+\]
+量子对易子在最低阶化为 Poisson 括号。路径积分中则表现为
+\[
+K\sim\int\mathcal D x\,\ee^{\ii S[x]/\hbar},
+\]
+当 $\hbar$ 很小时，不满足 $\delta S=0$ 的相邻路径因相位快速振荡而互相抵消，经典驻相路径占主导。
+
+\begin{keybox}
+量子到经典的核心桥梁可概括为
+\[
+\text{对易子}\to\text{Poisson 括号},
+\qquad
+\text{全体路径}\to\text{经典驻相路径}.
+\]
+\end{keybox}
+
+\section{相同粒子的交换对称性}
+
+对于两个相同粒子，交换粒子标签相当于交换坐标参数。玻色子波函数对称，
+\[
+\Psi(\vct r_1,\vct r_2)=\Psi(\vct r_2,\vct r_1),
+\]
+费米子波函数反对称，
+\[
+\Psi(\vct r_1,\vct r_2)=-\Psi(\vct r_2,\vct r_1).
+\]
+在二维空间中还允许任意子统计：
+\[
+\Psi(\vct r_1,\vct r_2)
+=\ee^{\ii\theta}\Psi(\vct r_2,\vct r_1),
+\qquad \theta\in[0,2\pi).
+\]
+其中 $\theta=0$ 对应玻色子，$\theta=\pi$ 对应费米子。某些模型可先在玻色型参数区域求解，再对统计参数作解析延拓；但这种做法依赖具体模型，并非无条件适用于所有体系。
+
+\section{Born--Oppenheimer 近似与势能面}
+
+电子质量远小于原子核质量，典型电子运动时间尺度快于核运动。Born--Oppenheimer（BO）近似先固定原子核坐标 $\{\vct R_I\}$，求解电子本征问题：
+\[
+\hat H_e\!\left(\{\vct r_i\};\{\vct R_I\}\right)
+\Psi_n\!\left(\{\vct r_i\};\{\vct R_I\}\right)
+=
+E_n\!\left(\{\vct R_I\}\right)
+\Psi_n\!\left(\{\vct r_i\};\{\vct R_I\}\right).
+\]
+在显式单位下，电子 Hamiltonian 可写为
+\[
+\hat H_e=
+-\sum_i\frac{\hbar^2}{2m_e}\nabla_i^2
+-\sum_{iI}\frac{Z_Ie^2}{4\pi\varepsilon_0|\vct r_i-\vct R_I|}
++\sum_{i<j}\frac{e^2}{4\pi\varepsilon_0|\vct r_i-\vct r_j|}.
+\]
+第 $n$ 个绝热势能面为
+\[
+U_n(\{\vct R_I\})
+=
+E_n(\{\vct R_I\})
++
+\sum_{I<J}
+\frac{Z_IZ_Je^2}{4\pi\varepsilon_0|\vct R_I-\vct R_J|}.
+\]
+若只保留基态电子面，核波函数满足
+\[
+\left[
+-\sum_{I=1}^{M}\frac{\hbar^2}{2M_I}\nabla_I^2
++U_0(\{\vct R_I\})
+\right]\Theta(\{\vct R_I\})
+=E\Theta(\{\vct R_I\}).
+\]
+
+\begin{remarkbox}[势能面的含义]
+$U_n(\{\vct R_I\})$ 是定义在 $3M$ 维核构型空间上的标量函数。经典分子动力学通常让原子核在某一势能面上运动；量子核运动则在同一势能面上求解核 Schrödinger 方程或进行路径积分采样。
+\end{remarkbox}
+
+\section{BO 近似的失效与核量子效应}
+
+将总波函数展开为
+\[
+\Psi(\vct r,\vct R)
+=
+\sum_n\Theta_n(\vct R)\Psi_n(\vct r;\vct R)
+\]
+后，核动能会产生非绝热耦合
+\[
+\vct d_{mn}^{(I)}(\vct R)
+=
+\left\langle
+\Psi_m(\vct r;\vct R)
+\middle|
+\nabla_I
+\Psi_n(\vct r;\vct R)
+\right\rangle .
+\]
+当不同电子态能量接近、势能面发生避免交叉或锥形交叉时，这些耦合不可忽略，电子与原子核不能再分离。光异构化中的无辐射跃迁是典型例子。
+
+即使 BO 分离成立，原子核也未必可以完全经典化。零点能、隧穿和量子离域会影响氢键、振动谱与同位素效应；常温水的 Raman 光谱便需要考虑显著的核量子效应。
+
+\chapter{Hamilton 力学与相空间}
+
+\section{Hamilton 方程}
+
+设广义坐标与共轭动量分别为 $\vct x$、$\vct p$。一般的 Hamiltonian 可写成
+\[
+H(\vct x,\vct p)
+=
+\frac12\vct p^{\mathsf T}\mat M^{-1}(\vct x)\vct p
++V(\vct x).
+\]
+Hamilton 方程为
+\[
+\dot{\vct x}=\frac{\partial H}{\partial\vct p},
+\qquad
+\dot{\vct p}=-\frac{\partial H}{\partial\vct x}.
+\]
+因此
+\[
+\dot{\vct x}=\mat M^{-1}(\vct x)\vct p,
+\]
+而第 $a$ 个动量分量满足
+\[
+\dot p_a
+=
+-\frac12\vct p^{\mathsf T}
+\frac{\partial\mat M^{-1}}{\partial x_a}
+\vct p
+-\frac{\partial V}{\partial x_a}.
+\]
+若质量矩阵为常量，
+\[
+\dot{\vct x}=\mat M^{-1}\vct p,
+\qquad
+\dot{\vct p}=-\nabla V(\vct x).
+\]
+
+\section{能量守恒}
+
+沿 Hamilton 轨道，
+\begin{align}
+\frac{\dd H}{\dd t}
+&=
+\frac{\partial H}{\partial\vct x}\cdot\dot{\vct x}
++
+\frac{\partial H}{\partial\vct p}\cdot\dot{\vct p}
++
+\frac{\partial H}{\partial t}\\
+&=
+\frac{\partial H}{\partial\vct x}\cdot
+\frac{\partial H}{\partial\vct p}
+-
+\frac{\partial H}{\partial\vct p}\cdot
+\frac{\partial H}{\partial\vct x}
++
+\frac{\partial H}{\partial t}
+=
+\frac{\partial H}{\partial t}.
+\end{align}
+因此，若 $H$ 不显含时间，则 $\dd H/\dd t=0$。
+
+\section{相空间与 Liouville 定理}
+
+位置和动量共同组成相空间：
+\[
+\vct z=
+\begin{pmatrix}
+\vct x\\
+\vct p
+\end{pmatrix},
+\qquad
+\dot{\vct z}
+=
+\mat J\nabla_{\vct z}H,
+\qquad
+\mat J=
+\begin{pmatrix}
+0&I\\
+-I&0
+\end{pmatrix}.
+\]
+由初值 $\vct z_0$ 经过时间 $t$ 演化到 $\vct z_t$，定义切映射
+\[
+\mat M_t=\frac{\partial\vct z_t}{\partial\vct z_0}.
+\]
+相空间体积元的变化为
+\[
+\dd\vct z_t
+=
+\left|\det\mat M_t\right|\dd\vct z_0.
+\]
+
+\begin{derivationbox}[Liouville 定理的行列式证明]
+利用 Jacobi 公式，
+\[
+\frac{\dd}{\dd t}\ln\det\mat M_t
+=
+\Tr\!\left(
+\mat M_t^{-1}\dot{\mat M}_t
+\right)
+=
+\nabla_{\vct z}\cdot\dot{\vct z}.
+\]
+Hamilton 流的散度为
+\begin{align}
+\nabla_{\vct z}\cdot\dot{\vct z}
+&=
+\sum_a
+\left(
+\frac{\partial\dot x_a}{\partial x_a}
++
+\frac{\partial\dot p_a}{\partial p_a}
+\right)\\
+&=
+\sum_a
+\left(
+\frac{\partial^2H}{\partial x_a\partial p_a}
+-
+\frac{\partial^2H}{\partial p_a\partial x_a}
+\right)
+=0.
+\end{align}
+所以 $\det\mat M_t$ 为常数。初始时 $\mat M_0=I$，故
+\[
+\boxed{\det\mat M_t=1}.
+\]
+即 Hamilton 动力学保持相空间体积。
+\end{derivationbox}
+
+等价地，Hamilton 流是辛变换：
+\[
+\mat M_t^{\mathsf T}\mat J\mat M_t=\mat J.
+\]
+
+\chapter{系综、遍历性与统计平均}
+
+\section{微正则与正则系综}
+
+固定能量 $E$ 的微正则分布为
+\[
+\rho_E(\vct z)
+=
+\frac{\delta(E-H(\vct z))}{\Omega(E)},
+\qquad
+\Omega(E)
+=
+\int\dd\vct z\,\delta(E-H(\vct z)).
+\]
+正则分布为
+\[
+\rho_\beta(\vct z)
+=
+\frac{\ee^{-\beta H(\vct z)}}{Z_{\mathrm{cl}}},
+\qquad
+Z_{\mathrm{cl}}
+=
+\int\dd\vct z\,\ee^{-\beta H(\vct z)}
+\]
+（量纲化时还需除以适当的 $h^F$，见第 \ref{sec:classicalZ} 节）。可观测量 $B$ 的正则平均为
+\[
+\avg{B}_\beta
+=
+\frac{\int\dd\vct z\,
+\ee^{-\beta H(\vct z)}B(\vct z)}
+{\int\dd\vct z\,
+\ee^{-\beta H(\vct z)}}.
+\]
+
+\section{遍历性假设}
+
+对一条充分长的轨道 $\vct z_t$，时间平均定义为
+\[
+\overline B_T
+=
+\frac1T\int_0^T\dd t\,B(\vct z_t).
+\]
+若在给定能量面上满足遍历性，则
+\[
+\lim_{T\to\infty}\overline B_T
+=
+\int\dd\vct z\,\rho_E(\vct z)B(\vct z)
+\equiv\avg{B}_E.
+\]
+
+\begin{remarkbox}[一个容易混淆的点]
+不带恒温器的 Hamilton 动力学保持能量，因而在理想遍历条件下采样的是微正则分布，而不是正则分布。正则平均可通过恒温分子动力学、Langevin 动力学或 Monte Carlo 获得。
+\end{remarkbox}
+
+正则积分可以分解为能量壳上的微正则积分：
+\begin{align}
+\int\dd\vct z\,\ee^{-\beta H(\vct z)}B(\vct z)
+&=
+\int\dd E\,\ee^{-\beta E}
+\int\dd\vct z\,
+\delta(E-H(\vct z))B(\vct z)\\
+&=
+\int\dd E\,\ee^{-\beta E}\Omega(E)\avg{B}_E.
+\end{align}
+这正是“在每个能量壳上遍历，再对能量作 Boltzmann 加权”的严格形式。
+
+\section{涨落与统计误差}
+
+可观测量的方差为
+\[
+\Var(B)
+=
+\avg{B^2}-\avg{B}^2,
+\]
+标准差为
+\[
+\Delta B=\sqrt{\Var(B)}.
+\]
+数值采样中，相邻时间点通常相关，故有效独立样本数小于总步数；误差分析需要考虑自相关时间。
+
+\section{高维积分与采样}
+
+基本 Gaussian 积分
+\[
+\int_{-\infty}^{\infty}\ee^{-a x^2+b x}\dd x
+=
+\sqrt{\frac{\pi}{a}}\,
+\ee^{b^2/(4a)},
+\qquad \operatorname{Re}a>0,
+\]
+在动量积分、传播子和虚时间路径积分中反复出现。
+
+高维空间若逐点网格化，计算量随自由度指数增长。Monte Carlo 直接按概率密度抽样，分子动力学则生成连续轨道；二者都以“重要性采样”替代对整个高维空间的穷举。
+
+\chapter{Lagrange 力学与作用量}
+
+\section{作用量与 Euler--Lagrange 方程}
+
+给定端点
+\[
+x(0)=x_0,\qquad x(t_f)=x_f,
+\]
+作用量定义为
+\[
+S[x]
+=
+\int_0^{t_f}\dd t\,L(x,\dot x,t).
+\]
+对路径作变分 $x(t)\to x(t)+\delta x(t)$，并令端点变分为零：
+\[
+\delta x(0)=\delta x(t_f)=0.
+\]
+则
+\begin{align}
+\delta S
+&=
+\int_0^{t_f}\dd t
+\left(
+\frac{\partial L}{\partial x}\delta x
++
+\frac{\partial L}{\partial\dot x}\delta\dot x
+\right)\\
+&=
+\int_0^{t_f}\dd t
+\left(
+\frac{\partial L}{\partial x}
+-
+\frac{\dd}{\dd t}
+\frac{\partial L}{\partial\dot x}
+\right)\delta x
++
+\left.
+\frac{\partial L}{\partial\dot x}\delta x
+\right|_0^{t_f}.
+\end{align}
+边界项为零。由于内部的 $\delta x(t)$ 任意，作用量驻值条件 $\delta S=0$ 给出
+\[
+\boxed{
+\frac{\dd}{\dd t}
+\frac{\partial L}{\partial\dot x}
+-
+\frac{\partial L}{\partial x}
+=0
+}.
+\]
+
+对于
+\[
+L=T-V=\frac12m\dot x^2-V(x),
+\]
+有
+\[
+m\ddot x=-\frac{\partial V}{\partial x},
+\]
+即 Newton 方程。
+
+\section{Lagrange 与 Hamilton 描述的关系}
+
+定义共轭动量
+\[
+p=\frac{\partial L}{\partial\dot x},
+\]
+并作 Legendre 变换
+\[
+H(x,p)=p\dot x-L(x,\dot x).
+\]
+由此得到 Hamilton 方程。两种描述完全等价，但侧重点不同：
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+描述 & 基本变量 & 核心结构\\
+\midrule
+Lagrange & $(x,\dot x)$ & 路径、作用量、边值问题\\
+Hamilton & $(x,p)$ & 相空间、辛结构、初值问题\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\chapter{量子传播子与虚时间}
+
+\section{时间演化算符}
+
+含时 Schrödinger 方程为
+\[
+\ii\hbar\frac{\dd}{\dd t}\ket{\psi(t)}
+=
+\hat H\ket{\psi(t)}.
+\]
+若 $\hat H$ 不显含时间，
+\[
+\ket{\psi(t)}
+=
+\ee^{-\ii\hat Ht/\hbar}\ket{\psi(0)}.
+\]
+时间演化算符
+\[
+\hat U(t)=\ee^{-\ii\hat Ht/\hbar}
+\]
+作用在任意初态上。
+
+位置本征态满足
+\[
+\hat x\ket{x}=x\ket{x},
+\qquad
+\braket{x}{x'}=\delta(x-x'),
+\qquad
+\int\dd x\,\ket{x}\bra{x}=1.
+\]
+因此
+\[
+\psi(y,t)
+=
+\int\dd x\,
+\underbrace{\bra{y}\ee^{-\ii\hat Ht/\hbar}\ket{x}}_{K(y,x;t)}
+\psi(x,0),
+\]
+其中
+\[
+K(y,x;t)
+=
+\bra{y}\ee^{-\ii\hat Ht/\hbar}\ket{x}
+\]
+称为传播子。
+
+\section{动量本征态与 Fourier 归一化}
+
+位置表象中
+\[
+\hat p=-\ii\hbar\frac{\partial}{\partial x}.
+\]
+动量本征方程
+\[
+\hat p\ket{p}=p\ket{p}
+\]
+给出
+\[
+-\ii\hbar\frac{\partial}{\partial x}\braket{x}{p}
+=
+p\braket{x}{p},
+\]
+故
+\[
+\braket{x}{p}=C\ee^{\ii px/\hbar}.
+\]
+利用
+\[
+\delta(x-y)
+=
+\int\dd p\,\braket{x}{p}\braket{p}{y}
+\]
+和 Fourier 表示
+\[
+\delta(x-y)
+=
+\frac{1}{2\pi\hbar}
+\int_{-\infty}^{\infty}
+\dd p\,
+\ee^{\ii p(x-y)/\hbar},
+\]
+得到
+\[
+\boxed{
+\braket{x}{p}
+=
+\frac{1}{\sqrt{2\pi\hbar}}
+\ee^{\ii px/\hbar}
+}.
+\]
+
+\section{自由粒子传播子}
+
+自由粒子 Hamiltonian 为
+\[
+\hat H_0=\frac{\hat p^2}{2m}.
+\]
+在传播子中插入动量完备关系：
+\begin{align}
+K_0(y,x;t)
+&=
+\int\dd p\,
+\braket{y}{p}
+\ee^{-\ii p^2t/(2m\hbar)}
+\braket{p}{x}\\
+&=
+\frac{1}{2\pi\hbar}
+\int\dd p\,
+\exp\left[
+\frac{\ii}{\hbar}p(y-x)
+-\frac{\ii t}{2m\hbar}p^2
+\right].
+\end{align}
+完成平方并使用 Gaussian 积分，得到
+\[
+\boxed{
+K_0(y,x;t)
+=
+\sqrt{\frac{m}{2\pi\ii\hbar t}}
+\exp\left[
+\frac{\ii m(y-x)^2}{2\hbar t}
+\right]
+}.
+\]
+
+自由粒子的经典路径为
+\[
+x_{\mathrm{cl}}(t')
+=
+x+\frac{y-x}{t}t',
+\]
+其经典作用量
+\[
+S_{\mathrm{cl}}(y,x;t)
+=
+\int_0^t\dd t'\,\frac12m\dot x_{\mathrm{cl}}^2
+=
+\frac{m(y-x)^2}{2t}.
+\]
+因此
+\[
+K_0(y,x;t)
+=
+\sqrt{\frac{m}{2\pi\ii\hbar t}}
+\ee^{\ii S_{\mathrm{cl}}/\hbar}.
+\]
+
+\section{虚时间与 Boltzmann 算符}
+
+令
+\[
+t=-\ii\hbar\beta,
+\]
+则
+\[
+\ee^{-\ii\hat Ht/\hbar}
+=
+\ee^{-\beta\hat H}.
+\]
+自由粒子的虚时间核为
+\[
+\boxed{
+\bra{y}\ee^{-\beta\hat H_0}\ket{x}
+=
+\sqrt{\frac{m}{2\pi\hbar^2\beta}}
+\exp\left[
+-\frac{m(y-x)^2}{2\hbar^2\beta}
+\right]
+}.
+\]
+实时间中的振荡相位变成正定的 Gaussian 权重，这使量子统计力学可以转写为概率采样问题。
+
+\begin{remarkbox}[谐振子的精确虚时间核]
+对于
+\[
+\hat H=\frac{\hat p^2}{2m}+\frac12m\omega^2\hat x^2,
+\]
+有
+\[
+\bra{x}\ee^{-\beta\hat H}\ket{x'}
+=
+\sqrt{\frac{m\omega}{2\pi\hbar\sinh(\beta\hbar\omega)}}
+\exp\left[
+-\frac{m\omega}{2\hbar\sinh(\beta\hbar\omega)}
+\left(
+(x^2+x'^2)\cosh(\beta\hbar\omega)-2xx'
+\right)
+\right].
+\]
+\end{remarkbox}
+
+\chapter{Trotter 拆分与路径积分}
+
+\section{插入完备关系}
+
+将总时间分成 $P$ 段，
+\[
+t=P\Delta t.
+\]
+传播子可写为
+\[
+K(x_P,x_0;t)
+=
+\int\prod_{j=1}^{P-1}\dd x_j
+\prod_{j=0}^{P-1}
+\bra{x_{j+1}}
+\ee^{-\ii\hat H\Delta t/\hbar}
+\ket{x_j}.
+\]
+这一步把一条连续路径离散为 $P$ 个短时片段，内部插入了 $P-1$ 个位置完备关系。
+
+\section{Trotter--Suzuki 拆分}
+
+设
+\[
+\hat H=\hat T+\hat V,
+\qquad
+[\hat T,\hat V]\ne 0.
+\]
+一阶拆分为
+\[
+\ee^{-\epsilon(\hat T+\hat V)}
+=
+\ee^{-\epsilon\hat T}
+\ee^{-\epsilon\hat V}
++\order(\epsilon^2),
+\]
+对称二阶拆分为
+\[
+\boxed{
+\ee^{-\epsilon(\hat T+\hat V)}
+=
+\ee^{-\epsilon\hat V/2}
+\ee^{-\epsilon\hat T}
+\ee^{-\epsilon\hat V/2}
++\order(\epsilon^3)
+}.
+\]
+单步误差为 $\order(\epsilon^3)$，固定总时间后全局误差为 $\order(P^{-2})$。
+
+\section{短时传播核}
+
+对一维体系
+\[
+\hat H=\frac{\hat p^2}{2m}+V(\hat x),
+\]
+令 $\Delta t=t/P$，对称拆分给出
+\begin{align}
+\bra{x_{j+1}}
+\ee^{-\ii\hat H\Delta t/\hbar}
+\ket{x_j}
+&\approx
+\exp\left[
+-\frac{\ii\Delta t}{2\hbar}
+\left(V(x_{j+1})+V(x_j)\right)
+\right]\\
+&\quad\times
+\sqrt{\frac{m}{2\pi\ii\hbar\Delta t}}
+\exp\left[
+\frac{\ii m(x_{j+1}-x_j)^2}{2\hbar\Delta t}
+\right].
+\end{align}
+
+代入全传播子并令 $P\to\infty$，
+\[
+K(x_f,x_i;t)
+=
+\int_{x(0)=x_i}^{x(t)=x_f}
+\mathcal D x\,
+\exp\left[
+\frac{\ii}{\hbar}
+\int_0^t\dd t'\,
+\left(
+\frac12m\dot x^2-V(x)
+\right)
+\right].
+\]
+这就是 Feynman 路径积分：
+\[
+\boxed{
+K=\int\mathcal D x\,\ee^{\ii S[x]/\hbar}
+}.
+\]
+
+\section{虚时间路径积分}
+
+在虚时间中令
+\[
+\beta_P=\frac{\beta}{P},
+\]
+短时密度矩阵为
+\begin{align}
+\bra{x_{j+1}}
+\ee^{-\beta_P\hat H}
+\ket{x_j}
+&\approx
+\left(
+\frac{m}{2\pi\hbar^2\beta_P}
+\right)^{1/2}\\
+&\quad\times
+\exp\left[
+-\frac{m(x_{j+1}-x_j)^2}{2\hbar^2\beta_P}
+-\frac{\beta_P}{2}
+\left(V(x_{j+1})+V(x_j)\right)
+\right].
+\end{align}
+连续极限可写为
+\[
+\rho(x_f,x_i;\beta)
+=
+\int_{x(0)=x_i}^{x(\beta\hbar)=x_f}
+\mathcal D x(\tau)\,
+\ee^{-S_E[x]/\hbar},
+\]
+其中 Euclidean 作用量为
+\[
+S_E[x]
+=
+\int_0^{\beta\hbar}\dd\tau
+\left[
+\frac12m\left(\frac{\dd x}{\dd\tau}\right)^2+V(x)
+\right].
+\]
+求迹时端点相接：
+\[
+x(\beta\hbar)=x(0),
+\]
+因此热路径是虚时间上的闭合环。
+
+\chapter{环形高分子同构与 PIMD}
+
+\section{量子配分函数的离散路径积分}
+
+量子配分函数
+\[
+Z=\Tr\ee^{-\beta\hat H}
+=
+\int\dd x_1\,
+\bra{x_1}\ee^{-\beta\hat H}\ket{x_1}.
+\]
+插入 $P-1$ 个位置完备关系，并采用对称 Trotter 拆分：
+\begin{align}
+Z_P
+&=
+\left(
+\frac{mP}{2\pi\beta\hbar^2}
+\right)^{P/2}
+\int\prod_{j=1}^{P}\dd x_j\\
+&\quad\times
+\exp\left[
+-\frac{\beta}{P}\sum_{j=1}^{P}V(x_j)
+-\frac{mP}{2\beta\hbar^2}
+\sum_{j=1}^{P}(x_j-x_{j+1})^2
+\right],
+\end{align}
+其中
+\[
+x_{P+1}=x_1,
+\qquad
+Z=\lim_{P\to\infty}Z_P.
+\]
+
+定义
+\[
+\beta_P=\frac{\beta}{P},
+\qquad
+\omega_P=\frac{1}{\beta_P\hbar}
+=\frac{P}{\beta\hbar},
+\]
+则
+\[
+Z_P
+=
+C_P
+\int\dd\vct x\,
+\exp\left[
+-\beta_P
+\sum_{j=1}^{P}
+\left(
+\frac12m\omega_P^2(x_j-x_{j+1})^2+V(x_j)
+\right)
+\right].
+\]
+
+\begin{keybox}[环形高分子同构]
+一个量子粒子的平衡配分函数，等价于一个由 $P$ 个经典“珠子”构成的环形高分子：
+\[
+\boxed{
+U_P(\vct x)
+=
+\sum_{j=1}^{P}
+\left[
+\frac12m\omega_P^2(x_j-x_{j+1})^2+V(x_j)
+\right]
+}.
+\]
+相邻珠子由谐弹簧连接，每个珠子都受到原始势能 $V$。
+\end{keybox}
+
+\begin{center}
+\begin{tikzpicture}[scale=1.1]
+\def\n{10}
+\def\r{1.65}
+\foreach \i in {1,...,\n}{
+  \coordinate (P\i) at ({360/\n*(\i-1)}:\r);
+}
+\foreach \i in {1,...,\n}{
+  \pgfmathtruncatemacro{\j}{mod(\i,\n)+1}
+  \draw[decorate,decoration={coil,aspect=0.45,segment length=3.5pt,amplitude=2.2pt},
+        color=Gold,thick] (P\i)--(P\j);
+}
+\foreach \i in {1,...,\n}{
+  \filldraw[fill=SoftBlue,draw=Navy,thick] (P\i) circle (2.6pt);
+}
+\node[align=center,color=Ink] at (0,0) {虚时间闭合\\$x_{P+1}=x_1$};
+\node[color=Teal] at (0,-2.35) {每个珠子感受 $V(x_j)$，相邻珠子由谐弹簧耦合};
+\end{tikzpicture}
+\end{center}
+
+\section{多维形式}
+
+对 $F$ 个自由度，质量矩阵为 $\mat M$，则
+\begin{align}
+Z_P
+&=
+C_P
+\int\prod_{j=1}^{P}\dd\vct x_j\,
+\exp\left[-\beta_P U_P(\vct x_1,\ldots,\vct x_P)\right],\\
+U_P
+&=
+\sum_{j=1}^{P}
+\left[
+\frac12\omega_P^2
+(\vct x_j-\vct x_{j+1})^{\mathsf T}
+\mat M
+(\vct x_j-\vct x_{j+1})
++
+V(\vct x_j)
+\right].
+\end{align}
+归一化常数为
+\[
+C_P=
+\left[
+\det(\mat M)
+\right]^{P/2}
+\left(
+\frac{P}{2\pi\beta\hbar^2}
+\right)^{FP/2}.
+\]
+
+\section{引入虚拟动量}
+
+Gaussian 恒等式允许在构型积分中引入任意正定的虚拟质量矩阵 $\widetilde{\mat M}$：
+\[
+\int\dd\vct x\,\ee^{-\beta V_{\mathrm{eff}}(\vct x)}
+=
+\left(\frac{\beta}{2\pi}\right)^{D/2}
+\frac{1}{\sqrt{\det\widetilde{\mat M}}}
+\int\dd\vct x\,\dd\vct p\,
+\ee^{-\beta H_{\mathrm{eff}}(\vct x,\vct p)},
+\]
+其中
+\[
+H_{\mathrm{eff}}
+=
+\frac12\vct p^{\mathsf T}
+\widetilde{\mat M}^{-1}\vct p
++
+V_{\mathrm{eff}}(\vct x).
+\]
+对环形高分子，常用
+\[
+H_P
+=
+\sum_{j=1}^{P}
+\frac12\vct p_j^{\mathsf T}
+\widetilde{\mat M}_j^{-1}\vct p_j
++
+U_P(\vct x_1,\ldots,\vct x_P),
+\]
+并在温度 $\beta_P^{-1}$ 下采样
+\[
+\ee^{-\beta_P H_P}.
+\]
+
+\begin{remarkbox}[虚拟动量不是物理动量]
+$\vct p_j$ 与 $\widetilde{\mat M}_j$ 是为构造高效采样动力学而引入的辅助变量。改变虚拟质量会改变采样效率和人工动力学频率，但不改变平衡构型分布。
+\end{remarkbox}
+
+这正是路径积分分子动力学（PIMD）的基础：用经典 Hamilton 方程推进一个扩展的环形高分子体系，从而采样量子 Boltzmann 分布。
+
+\section{位置型可观测量的估计量}
+
+对于只依赖位置的算符
+\[
+\hat B=B(\hat x),
+\]
+量子热平均为
+\[
+\avg{\hat B}
+=
+\frac{\Tr(\ee^{-\beta\hat H}\hat B)}
+{\Tr(\ee^{-\beta\hat H})}.
+\]
+由于迹具有循环不变性，每个珠子地位等价，得到原始估计量
+\[
+\boxed{
+B_P(\vct x)
+=
+\frac1P\sum_{j=1}^{P}B(x_j)
+}.
+\]
+特别地，环形高分子的质心
+\[
+\bar x=\frac1P\sum_{j=1}^{P}x_j
+\]
+是重要的集体坐标，但一般有
+\[
+\frac1P\sum_jB(x_j)\ne B(\bar x)
+\]
+（除非 $B$ 为线性函数）。
+
+\section{动量算符的导数表示}
+
+对任意算符 $\hat A$，
+\[
+\bra{x}\hat A\hat p\ket{x'}
+=
+\ii\hbar\frac{\partial}{\partial x'}
+\bra{x}\hat A\ket{x'}.
+\]
+令 $\hat A=\ee^{-\beta_P\hat H}$，并采用原始短时核
+\[
+K_P(x,x')
+\approx
+\left(
+\frac{m}{2\pi\hbar^2\beta_P}
+\right)^{1/2}
+\exp\left[
+-\frac{m(x-x')^2}{2\hbar^2\beta_P}
+-\frac{\beta_P}{2}\left(V(x)+V(x')\right)
+\right],
+\]
+则
+\[
+\frac{\bra{x}\ee^{-\beta_P\hat H}\hat p\ket{x'}}
+{K_P(x,x')}
+\approx
+\ii\left[
+\frac{m(x-x')}{\beta_P\hbar}
+-\frac{\beta_P\hbar}{2}V'(x')
+\right].
+\]
+对无磁场、实势能的平衡体系，时间反演对称性给出
+\[
+\avg{\hat p}=0.
+\]
+对于动能或 $\hat p^2$，实际计算通常采用热力学估计量或 virial 估计量，以降低方差。
+
+\section{经典配分函数与相空间量子化}
+\label{sec:classicalZ}
+
+经典配分函数需要用 Planck 常数给相空间体积定标：
+\[
+Z_{\mathrm{cl}}
+=
+\frac{1}{h^F}
+\int\dd\vct x\,\dd\vct p\,
+\ee^{-\beta H(\vct x,\vct p)},
+\qquad h=2\pi\hbar.
+\]
+对于一维无限深势阱（长度 $L$），
+\[
+E_n=\frac{\hbar^2\pi^2n^2}{2mL^2}.
+\]
+在 $L\to\infty$ 的连续极限中，量子求和变为动量积分：
+\[
+Z
+=
+\sum_{n=1}^{\infty}\ee^{-\beta E_n}
+\longrightarrow
+\frac{L}{h}
+\int_{-\infty}^{\infty}
+\dd p\,\ee^{-\beta p^2/(2m)}
+=
+\frac{L}{h}
+\sqrt{\frac{2\pi m}{\beta}}.
+\]
+一般地，
+\[
+Z_{\mathrm{cl}}
+=
+\frac1h
+\sqrt{\frac{2\pi m}{\beta}}
+\int\dd x\,\ee^{-\beta V(x)}.
+\]
+这也说明：构型空间中的 Boltzmann 积分可以通过引入 Gaussian 动量转化为 Hamilton 动力学可采样的相空间积分。
+
+\chapter{Wigner 相空间表象}
+
+\section{Weyl 符号与 Wigner 函数}
+
+对算符 $\hat A$，定义其 Weyl 符号
+\[
+A_{\Wig}(\vct R,\vct P)
+=
+\int\dd\vct\Delta\,
+\ee^{-\ii\vct P\cdot\vct\Delta/\hbar}
+\bra{\vct R+\vct\Delta/2}
+\hat A
+\ket{\vct R-\vct\Delta/2}.
+\]
+密度算符 $\hat\rho$ 对应的 Wigner 函数定义为
+\[
+W_\rho(\vct R,\vct P)
+=
+\frac{1}{(2\pi\hbar)^F}\rho_{\Wig}(\vct R,\vct P).
+\]
+对于纯态 $\hat\rho=\ket{\phi}\bra{\phi}$，
+\[
+W_\phi(\vct R,\vct P)
+=
+\frac{1}{(2\pi\hbar)^F}
+\int\dd\vct\Delta\,
+\ee^{-\ii\vct P\cdot\vct\Delta/\hbar}
+\phi\!\left(\vct R+\frac{\vct\Delta}{2}\right)
+\phi^*\!\left(\vct R-\frac{\vct\Delta}{2}\right).
+\]
+
+其边缘分布为
+\[
+\int\dd\vct P\,W_\phi(\vct R,\vct P)
+=
+|\phi(\vct R)|^2,
+\]
+\[
+\int\dd\vct R\,W_\phi(\vct R,\vct P)
+=
+|\widetilde\phi(\vct P)|^2.
+\]
+Wigner 函数是准概率分布：归一化且具有正确边缘分布，但可取负值。
+
+\section{迹与相空间积分}
+
+Weyl 变换满足
+\[
+\boxed{
+\Tr(\hat A\hat B)
+=
+\int\frac{\dd\vct R\,\dd\vct P}{(2\pi\hbar)^F}
+A_{\Wig}(\vct R,\vct P)
+B_{\Wig}(\vct R,\vct P)
+}.
+\]
+因此
+\[
+\avg{\hat A}
+=
+\int\dd\vct R\,\dd\vct P\,
+W_\rho(\vct R,\vct P)
+A_{\Wig}(\vct R,\vct P).
+\]
+
+例如，位置算符的 Weyl 符号为
+\[
+(\hat x)_{\Wig}(R,P)=R.
+\]
+热密度算符是混态：
+\[
+\ee^{-\beta\hat H}
+=
+\sum_n
+\ee^{-\beta E_n}
+\ket{\phi_n}\bra{\phi_n}.
+\]
+
+\section{谐振子的热 Wigner 分布}
+
+令
+\[
+H_{\mathrm{cl}}(x,p)
+=
+\frac{p^2}{2m}
++\frac12m\omega^2x^2,
+\qquad
+a=\frac{\beta\hbar\omega}{2}.
+\]
+未归一化的热算符 Weyl 符号为
+\[
+\left[\ee^{-\beta\hat H}\right]_{\Wig}
+=
+\operatorname{sech}(a)
+\exp\left[
+-\frac{2\tanh(a)}{\hbar\omega}
+H_{\mathrm{cl}}(x,p)
+\right].
+\]
+由此得到
+\[
+Z
+=
+\frac{1}{2\sinh a},
+\]
+以及归一化的热 Wigner 函数
+\[
+W_\beta(x,p)
+=
+\frac{\tanh a}{\pi\hbar}
+\exp\left[
+-\frac{2\tanh a}{\hbar\omega}
+H_{\mathrm{cl}}(x,p)
+\right].
+\]
+位置方差为
+\[
+\avg{x^2}_{\mathrm q}
+=
+\frac{\hbar}{2m\omega}\coth a.
+\]
+经典结果为
+\[
+\avg{x^2}_{\mathrm{cl}}
+=
+\frac{1}{\beta m\omega^2}.
+\]
+两者之比
+\[
+\boxed{
+Q
+=
+\frac{\avg{x^2}_{\mathrm q}}
+{\avg{x^2}_{\mathrm{cl}}}
+=
+\frac{\beta\hbar\omega/2}
+{\tanh(\beta\hbar\omega/2)}
+}.
+\]
+高温或经典极限 $\beta\hbar\omega\ll1$ 时，
+\[
+Q\to1;
+\]
+低温时量子零点涨落使 $Q>1$。
+
+\section{无界与受约束相空间}
+
+核坐标与动量通常定义在无界的 canonical 相空间上。有限维电子态则可以使用离散 Wigner 表象、spin mapping 或基于 $SU(N)$ coherent state 的受约束相空间。非绝热动力学中，核相空间与电子映射变量相结合，可在统一的相空间框架中描述核--电子耦合。
+
+\chapter{逻辑总结与后续方向}
+
+\begin{routebox}
+\[
+\begin{aligned}
+&\text{经典 Hamilton 动力学}
+&&\Rightarrow\text{相空间、能量守恒、Liouville 定理},\\
+&\text{统计力学}
+&&\Rightarrow\text{系综平均、遍历性、重要性采样},\\
+&\text{Lagrange 作用量}
+&&\Rightarrow\text{经典驻相路径},\\
+&\text{量子传播子}
+&&\xrightarrow{\,t=-\ii\hbar\beta\,}\text{Boltzmann 算符},\\
+&\text{Trotter 拆分}
+&&\Rightarrow\text{虚时间路径积分},\\
+&\text{周期虚时间路径}
+&&\Rightarrow\text{环形高分子同构与 PIMD},\\
+&\text{Weyl 变换}
+&&\Rightarrow\text{量子相空间与 Wigner 准概率}.
+\end{aligned}
+\]
+\end{routebox}
+
+后续可沿三条方向继续展开：
+
+\begin{enumerate}
+\item \textbf{非绝热动力学：}BO 近似失效时，电子态与核自由度必须耦合处理，包括锥形交叉、无辐射跃迁及光化学过程。
+\item \textbf{路径积分估计量与采样：}研究能量、热容、动量分布及相关函数的低方差估计量，以及 normal-mode、staging、Langevin 等高效采样方法。
+\item \textbf{量子相空间动力学：}由 Wigner--Moyal 方程出发，理解经典 Liouville 方程的极限，并连接 semiclassical、mapping-variable 与量子轨迹方法。
+\end{enumerate}
+
+\end{document}
