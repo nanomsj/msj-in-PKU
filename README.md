@@ -71,7 +71,7 @@ msj-in-PKU/
 | 课程名称 | 文件夹 | 教师 |
 |:---------|:-------|:-----|
 | [chem-in-math 数学中的化学](https://github.com/nanomsj/msj-in-PKU/tree/main/26Summer/chem-in-math) | `chem-in-math` | 刘剑 |
-| [Topics-in-quantitative-finance 量化金融](https://github.com/nanomsj/msj-in-PKU/tree/main/26Summer/Topics-in-quantitative-finance) | `Topics-in-quantitative-finance` | 王 太和 |
+| [Topics-in-quantitative-finance 量化金融专题](https://github.com/nanomsj/msj-in-PKU/tree/main/26Summer/Topics-in-quantitative-finance) | `Topics-in-quantitative-finance` | 王 太和 |
 
 
 
