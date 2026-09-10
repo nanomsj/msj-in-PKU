@@ -7,6 +7,7 @@
 - [课程列表](#课程列表)
   - [24Fall](#24fall)
   - [25Spring](#25spring)
+  - [26Spring](#26spring)
   - [26Summer](#26summer)
 - [许可证](#许可证)
 
@@ -27,8 +28,12 @@ msj-in-PKU/
 │   ├── data-structure-and-algorithm/ # 数据结构与算法
 │   ├── college-chemistry.pdf    # 大学化学
 │   └── music-and-math.pdf    # 音乐与数学
+├── 26Spring/
+│   ├── Biostatistics/     # 生物统计
+│   └── Introduction-to-finance/ # 金融学概论
 └── 26Summer/
-    └── chem-in-math/     # 数学中的化学
+    ├── chem-in-math/     # 数学中的化学
+    └── Topics-in-quantitative-finance/ # 量化金融专题
 ```
 
 ## 课程列表
@@ -52,11 +57,21 @@ msj-in-PKU/
 
 
 
+### 26Spring
+
+| 课程名称 | 文件夹 | 教师 |
+|:---------|:-------|:-----|
+| [生物统计](https://github.com/nanomsj/msj-in-PKU/tree/main/26Spring/Biostatistics) | `Biostatistics` | 胡懿娟 |
+| [金融学概论](https://github.com/nanomsj/msj-in-PKU/tree/main/26Spring/Introduction-to-finance) | `Introduction-to-finance` | 李劢 |
+
+
+
 ### 26Summer
 
 | 课程名称 | 文件夹 | 教师 |
 |:---------|:-------|:-----|
 | [chem-in-math 数学中的化学](https://github.com/nanomsj/msj-in-PKU/tree/main/26Summer/chem-in-math) | `chem-in-math` | 刘剑 |
+| [Topics-in-quantitative-finance 量化金融](https://github.com/nanomsj/msj-in-PKU/tree/main/26Summer/Topics-in-quantitative-finance) | `Topics-in-quantitative-finance` | 王 太和 |
 
 
 
@@ -78,4 +93,4 @@ msj-in-PKU/
 - 提 [Issue](https://github.com/nanomsj/msj-in-PKU/issues)
 - 微信：aijihsnim
 
-本README内容参考了 https://github.com/vwOvOwv/PKU-Undergraduate-Course 十分感谢。
+本README格式参考了 https://github.com/vwOvOwv/PKU-Undergraduate-Course ，十分感谢。
