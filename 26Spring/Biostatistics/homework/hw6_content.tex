@@ -1,0 +1,280 @@
+%======================================================================
+\subsection{Problem 1}
+%======================================================================
+
+\textbf{Consider $Y \mid \pi \sim \text{Binomial}(n, \pi)$, where $\pi \sim \text{Beta}(\alpha, \beta)$. Find $\text{Var}(Y)$.}
+
+\textbf{Solution:}
+
+由方差分解公式：
+\[
+\text{Var}(Y) = \text{Var}[E(Y \mid \pi)] + E[\text{Var}(Y \mid \pi)]
+\]
+
+由于 $Y \mid \pi \sim \text{Binomial}(n, \pi)$，有：
+\[
+E(Y \mid \pi) = n\pi, \quad \text{Var}(Y \mid \pi) = n\pi(1-\pi)
+\]
+
+代入得：
+\[
+\text{Var}(Y) = \text{Var}(n\pi) + E[n\pi(1-\pi)]
+\]
+
+而 $\pi \sim \text{Beta}(\alpha, \beta)$ 的性质为：
+\[
+E(\pi) = \frac{\alpha}{\alpha+\beta}, \quad \text{Var}(\pi) = \frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}
+\]
+
+计算 $E[\pi(1-\pi)]$：
+\begin{align*}
+E[\pi(1-\pi)] &= E\pi - E\pi^2 \\
+&= \frac{\alpha}{\alpha+\beta} - \left(\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)} + \frac{\alpha^2}{(\alpha+\beta)^2}\right) \\
+&= \frac{\alpha(\alpha+\beta)(\alpha+\beta+1) - \alpha\beta - \alpha^2(\alpha+\beta+1)}{(\alpha+\beta)^2(\alpha+\beta+1)} \\
+&= \frac{\alpha^2\beta + \alpha\beta^2}{(\alpha+\beta)^2(\alpha+\beta+1)} = \frac{\alpha\beta}{(\alpha+\beta)(\alpha+\beta+1)}
+\end{align*}
+
+因此：
+\begin{align*}
+\text{Var}(Y) &= \frac{n^2\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)} + \frac{n\alpha\beta}{(\alpha+\beta)(\alpha+\beta+1)} \\
+&= \boxed{\frac{n\alpha\beta(n+\alpha+\beta)}{(\alpha+\beta)^2(\alpha+\beta+1)}}
+\end{align*}
+
+\textbf{Remark:} 此处也可看出 $\text{Var}(Y)$ 有 over-dispersion（因为 $\text{Var}(Y) > n\mu(1-\mu)$，其中 $\mu = \frac{\alpha}{\alpha+\beta}$）。
+
+%======================================================================
+\subsection{Problem 2}
+%======================================================================
+
+\textbf{Consider the quasi-likelihood function}
+\[
+Q_i(\mu_i; y_i) = \int_{y_i}^{\mu_i} \frac{y_i - t}{V^*(t)} \, dt
+\]
+\textbf{where $V^*(\mu_i) = \text{Var}(Y_i) / \phi$ is the variance function. Show that:}
+
+\begin{enumerate}
+\item[(a)] $\frac{\partial Q_i}{\partial \mu_i} = \frac{y_i - \mu_i}{V^*(\mu_i)}$
+
+\textbf{Solution:}
+
+由积分上限函数求导公式：
+\[
+\frac{\partial Q_i}{\partial \mu_i} = \frac{y_i - \mu_i}{V^*(\mu_i)}
+\]
+
+取期望：
+\[
+E\left(\frac{\partial Q_i}{\partial \mu_i}\right) = \frac{E(Y_i) - \mu_i}{V^*(\mu_i)} = \frac{\mu_i - \mu_i}{V^*(\mu_i)} = 0
+\]
+
+\bigskip
+
+\item[(b)] $\frac{\partial Q_i}{\partial \beta_j} = \sum_{i=1}^{n} \frac{\partial Q_i}{\partial \mu_i} \cdot \frac{\partial \mu_i}{\partial \beta_j}$
+
+\textbf{Solution:}
+
+由链式法则：
+\[
+\frac{\partial Q_i}{\partial \beta_j} = \frac{\partial Q_i}{\partial \mu_i} \cdot \frac{\partial \mu_i}{\partial \beta_j}
+\]
+
+取期望，由(a)知 $E\left(\frac{\partial Q_i}{\partial \mu_i}\right) = 0$，故：
+\[
+E\left(\frac{\partial Q_i}{\partial \beta_j}\right) = 0
+\]
+
+\bigskip
+
+\item[(c)] $\frac{\partial^2 Q_i}{(\partial \mu_i)^2} = \frac{-1}{V^*(\mu_i)} - \frac{(y_i - \mu_i) \cdot \frac{dV^*(\mu_i)}{d\mu_i}}{[V^*(\mu_i)]^2}$
+
+\textbf{Solution:}
+
+对(a)中的结果关于 $\mu_i$ 求导：
+\begin{align*}
+\frac{\partial^2 Q_i}{(\partial \mu_i)^2} &= \frac{\partial}{\partial \mu_i}\left(\frac{y_i - \mu_i}{V^*(\mu_i)}\right) \\
+&= \frac{-V^*(\mu_i) - (y_i - \mu_i) \cdot \frac{dV^*(\mu_i)}{d\mu_i}}{[V^*(\mu_i)]^2} \\
+&= \frac{-1}{V^*(\mu_i)} - \frac{(y_i - \mu_i) \cdot \frac{dV^*(\mu_i)}{d\mu_i}}{[V^*(\mu_i)]^2}
+\end{align*}
+
+后一项对 $Y_i$ 取期望得到 0（因为 $E(y_i - \mu_i) = 0$），故：
+\[
+E\left(\frac{\partial^2 Q_i}{(\partial \mu_i)^2}\right) = \frac{-1}{V^*(\mu_i)}
+\]
+
+\bigskip
+
+\item[(d)] $E\left[\frac{\partial^2 Q_i}{\partial \beta_j \partial \beta_k}\right] = E\left[\frac{\partial Q_i}{\partial \mu_i}\right]^2 \cdot \frac{\partial \mu_i}{\partial \beta_j} \cdot \frac{\partial \mu_i}{\partial \beta_k}$
+
+\textbf{Solution:}
+
+\begin{align*}
+\frac{\partial}{\partial \beta_j}\left(\frac{\partial Q_i}{\partial \beta_k}\right) &= \frac{\partial}{\partial \beta_j}\left(\frac{\partial Q_i}{\partial \mu_i} \cdot \frac{\partial \mu_i}{\partial \beta_k}\right) \\
+&= \left(\frac{\partial^2 Q_i}{\partial \mu_i^2} \cdot \frac{\partial \mu_i}{\partial \beta_k} + \frac{\partial Q_i}{\partial \mu_i} \cdot \frac{\partial^2 \mu_i}{\partial \mu_i \partial \beta_k}\right) \cdot \frac{\partial \mu_i}{\partial \beta_j}
+\end{align*}
+
+取期望，由(c)知 $E\left(\frac{\partial^2 Q_i}{\partial \mu_i^2}\right) = \frac{-1}{V^*(\mu_i)}$，且 $E\left(\frac{\partial Q_i}{\partial \mu_i}\right) = 0$，故：
+\[
+E \frac{\partial}{\partial \beta_j}\left(\frac{\partial Q_i}{\partial \beta_k}\right) = E\left(\frac{\partial^2 Q_i}{\partial \mu_i^2}\right) \cdot \frac{\partial \mu_i}{\partial \beta_k} \cdot \frac{\partial \mu_i}{\partial \beta_j}
+\]
+
+又有：
+\[
+E\left[\frac{\partial Q_i}{\partial \beta_j} \cdot \frac{\partial Q_i}{\partial \beta_k}\right] = E\left(\frac{\partial Q_i}{\partial \mu_i}\right)^2 \cdot \frac{\partial \mu_i}{\partial \beta_j} \cdot \frac{\partial \mu_i}{\partial \beta_k}
+\]
+
+则由(c)即得结论。
+\end{enumerate}
+
+%======================================================================
+\subsection{Problem 3}
+%======================================================================
+
+\textbf{Let $Y_1, Y_2, \ldots, Y_n$ be binary random variables with $P(Y_i = 1) = \pi$, $P(Y_i = 0) = 1 - \pi$. Let $Y = \sum_{i=1}^n Y_i$.}
+
+\begin{enumerate}
+\item[(a)] \textbf{Suppose $Y_1, Y_2, \ldots, Y_n$ are independent. Find $\text{Var}(Y)$.}
+
+\textbf{Solution:}
+
+Variance of Binomial: $\text{Var} = n\pi(1-\pi)$
+
+对于(a)中情景：
+\begin{align*}
+\widetilde{\text{Var}} &= E(Y - \bar{Y})^2 = \pi(n - n\pi)^2 + (1-\pi)(n\pi)^2 \\
+&= n^2\pi - 2n^2\pi^2 + n^2\pi^3 + n^2\pi^2 - n^2\pi^3 \\
+&= n^2\pi(1-\pi)
+\end{align*}
+
+$n > 1$ 时有 $\widetilde{\text{Var}} > \text{Var}$，体现了 Overdispersion！
+
+\bigskip
+
+\item[(b)] \textbf{Now suppose $\text{Cov}(Y_i, Y_j) = \rho \pi(1-\pi)$ for all $i \neq j$. Find $\text{Var}(Y)$.}
+
+\textbf{Solution:}
+
+（注意到(a)即为 $\rho = 1$ 情形）
+
+$\rho = 0$ 时：
+\begin{align*}
+\text{Var}_{\rho} &= \sum_i \text{Var}(Y_i) + \sum_{i \neq j} \text{Cov}(Y_i, Y_j) \\
+&= n\pi(1-\pi) + n(n-1)\pi(1-\pi)\rho > \text{Var} = n\pi(1-\pi)
+\end{align*}
+
+\bigskip
+
+\item[(c)] \textbf{If $\rho = -1$, what is $\text{Var}(Y)$?}
+
+\textbf{Solution:}
+
+由于 $n$ even，故 $Y \equiv \frac{n}{2}$
+
+$\{Y_i\}$ 形如 $\{1, 0, 1, 0, \ldots, 1, 0\}$ 或 $\{0, 1, 0, 1, \ldots, 0, 1\}$
+
+故 $\text{Var}_{-1} = 0 < \text{Var}$，($0 < \pi < 1$)
+\end{enumerate}
+
+%======================================================================
+\subsection{Problem 4}
+%======================================================================
+
+\textbf{Use the Framingham data to fit a logistic regression model with TOTCHOL as the response (grouped by AGE\_group) and AGE\_group as the predictor.}
+
+\textbf{Solution:}
+
+缺失数据处理方式：仅保留了本题所用的 AGE\_group 和 TOTCHOL 均存在的数据，删除了缺失数据。
+
+\begin{lstlisting}[caption={Data Preparation}]
+df <- read.csv("Framingham_data.csv")
+dfclean <- df[complete.cases(df[, c("AGE_group", "TOTCHOL")]), ]
+dfclean$bi_chole <- ifelse(dfclean$TOTCHOL > 200, 1, 0)
+\end{lstlisting}
+
+\begin{enumerate}
+\item[(a)] \textbf{Fit the model using both ungrouped and grouped data. Report the deviance for each.}
+
+\textbf{Solution:}
+
+\begin{lstlisting}[caption={Ungrouped Data Analysis}]
+# ungrouped data
+model_ungrouped <- glm(bi_chole ~ AGE_group,
+                       data = dfclean,
+                       family = binomial(link = "logit"))
+summary(model_ungrouped)
+\end{lstlisting}
+
+Ungrouped 结果：
+\begin{verbatim}
+    Null deviance: 10221  on 10767  degrees of freedom
+Residual deviance: 10164  on 10766  degrees of freedom
+\end{verbatim}
+
+\begin{lstlisting}[caption={Grouped Data Analysis}]
+# grouped data
+library(dplyr)
+
+grouped <- dfclean %>%
+  group_by(AGE_group) %>%
+  summarise(
+    ynum = sum(bi_chole),   # 高胆固醇人数
+    n = n()                 # 总人数
+  ) %>%
+  ungroup()
+
+model_grouped <- glm(cbind(ynum, (n - ynum)) ~ AGE_group,
+                     data = grouped,
+                     family = binomial(link = "logit"))
+summary(model_grouped)
+\end{lstlisting}
+
+Grouped 结果：
+\begin{verbatim}
+    Null deviance: 102.924  on 2  degrees of freedom
+Residual deviance:  46.479  on 1  degrees of freedom
+\end{verbatim}
+
+注意到两组数据均有 $M_0 > M_1$，且 $D_0 - D_1$ 分别为 57 和约 56.4，说明无论使用哪种方法，均认为 AGE\_group 均对胆固醇（二分值）有显著影响。
+
+又发现 ungrouped 的 deviance 远大于 grouped。这是因为在 glm 中，$D = 2(l_{\text{saturated}} - l_{\text{model}})$ 而两种数据形式对应的饱和模型不同。ungrouped 的饱和模型对应每个观测单独拟合，因此对数似然差值很大；而 grouped 的饱和模型只需要拟合 $\hat{p}_j = \frac{y_j}{n_j}$，对数似然差值远小于前者。
+
+\bigskip
+
+\item[(b)] \textbf{Compare the deviance differences $D_0 - D_1$ from both analyses. Are they the same? Why?}
+
+\textbf{Solution:}
+
+在(a)中已经得到两者的 deviance 差值相近。
+
+理论上二者应该完全相等，因为：
+\[
+D_0 - D_1 = 2(l_{\text{saturated}} - l_{M_0}) - 2(l_{\text{saturated}} - l_{M_1}) = -2(l_{M_0} - l_{M_1})
+\]
+
+即此处 deviance 的差不依赖于数据表示方式。
+
+如果我们使用手动计算 deviance 的方式来进行，可以得到差值均为 56.44513，验证了相等性。直接使用 glm 函数得出 0.6 左右的差值可能是因为计算过程累计误差等因素导致的。
+
+\begin{lstlisting}[caption={Manual Deviance Calculation}]
+# ungrouped
+model0_ung <- glm(bi_chole ~ 1,
+                  data = dfclean,
+                  family = binomial(link = "logit"))
+model1_ung <- glm(bi_chole ~ AGE_group,
+                  data = dfclean,
+                  family = binomial(link = "logit"))
+delta_def_ung <- 2 * (logLik(model1_ung) - logLik(model0_ung))
+
+# grouped
+model0_grp <- glm(cbind(ynum, n - ynum) ~ 1,
+                  data = grouped,
+                  family = binomial(link = "logit"))
+model1_grp <- glm(cbind(ynum, n - ynum) ~ AGE_group,
+                  data = grouped,
+                  family = binomial(link = "logit"))
+delta_def_grp <- 2 * (logLik(model1_grp) - logLik(model0_grp))
+
+# output
+delta_def_ung
+delta_def_grp
+\end{lstlisting}
+\end{enumerate}

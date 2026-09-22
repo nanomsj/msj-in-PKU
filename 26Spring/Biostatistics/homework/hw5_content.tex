@@ -1,0 +1,341 @@
+%======================================================================
+\subsection{Problem 1}
+%======================================================================
+
+\textbf{What are canonical link functions for the following distributions:}
+
+\begin{enumerate}
+\item[(a)] $Y$ is an Exponential($\lambda$) random variable with density
+\[
+f(y;\lambda) = \lambda\exp(-\lambda y) \quad \text{for } y > 0
+\]
+
+\textbf{Solution:}
+
+指数族形式：
+\[
+f(y;\lambda) = \exp\bigl[(-\lambda)\, y + \log\lambda\bigr]
+\]
+
+令 $\theta = -\lambda$，则
+\[
+\mu = E[Y] = \frac{1}{\lambda} = \frac{1}{-\theta} = -\frac{1}{\theta}
+\]
+
+Canonical link 满足 $g(\mu) = \theta$，故
+\[
+\boxed{g(\mu) = \frac{1}{\mu}}
+\]
+
+\bigskip
+
+\item[(b)] $Y$ is a Gamma($\mu,\alpha$) random variable with density
+\[
+f(y;\mu,\alpha) = \frac{1}{\Gamma(\alpha)(\mu/\alpha)^\alpha}\, y^{\alpha-1}\exp(-\alpha y/\mu) \quad \text{for } y > 0
+\]
+
+\textbf{Solution:}
+
+将密度写为指数族形式：
+\[
+f(y;\mu,\alpha) = \exp\!\Bigl[-\frac{\alpha}{\mu}\,y + \alpha\log y - \log\Gamma(\alpha) - \alpha\log\mu + \alpha\log\alpha - \log y\Bigr]
+\]
+
+令
+\[
+\theta = \begin{bmatrix}\theta_1 \\ \theta_2\end{bmatrix} = \begin{bmatrix}-\alpha/\mu \\ \alpha\end{bmatrix}, \qquad T(y) = \begin{bmatrix}y \\ \log y\end{bmatrix}
+\]
+
+则 $\mu = -\theta_2/\theta_1$。取 $b(\theta) = \log\Gamma(\theta_2) + \theta_2\log(-\theta_2/\theta_1) - \theta_2\log\theta_2$，可验证
+\[
+E[Y] = \frac{\partial b(\theta)}{\partial \theta_1} = \mu
+\]
+
+故 canonical link 为
+\[
+\boxed{g(\mu) = \frac{1}{\mu}}
+\]
+
+\end{enumerate}
+
+%======================================================================
+\subsection{Problem 2}
+%======================================================================
+
+\textbf{Consider a Gamma regression model. Let $Y_1,Y_2,\ldots,Y_n$ be independent Gamma($\mu_i,\alpha$) random variables with density}
+\[
+f(y_i;\mu_i,\alpha) = \frac{1}{\Gamma(\alpha)(\mu_i/\alpha)^\alpha}\, y_i^{\alpha-1}\exp(-\alpha y_i/\mu_i) \quad \text{for } y_i > 0,
+\]
+\textbf{where $\alpha$ is a fixed known constant (say, $\alpha=1$) and $\mu_i$ is the parameter of interest. Assume that $g(\mu_i) = x_i^T\beta$, $x_i = (x_{i1},x_{i2},\ldots,x_{ip})^T$ and $\beta = (\beta_1,\beta_2,\ldots,\beta_p)^T$.}
+
+\begin{enumerate}
+\item[(a)] \textbf{Describe steps to compute the maximum likelihood estimates (MLE) of $\beta$, denoted by $\hat{\beta}$, using Iteratively Reweighted Least Squares (IRLS) for the Gamma regression model.}
+
+\textbf{Solution:}
+
+取 canonical link $g(\mu_i) = 1/\mu_i = x_i^T\beta$（见 Problem 1），则
+
+\begin{itemize}
+\item $g'(\mu_i) = -1/\mu_i^2$
+\item $\text{Var}(Y_i) = \alpha\cdot\frac{\mu_i^2}{\alpha} = \mu_i^2$（取 $\phi = 1/\alpha$ 为 dispersion 参数）
+\item 权重 $W_i = \bigl(V_i\,[g'(\mu_i)]^2\bigr)^{-1} = \frac{\mu_i^4}{\mu_i^2} = \mu_i^2$
+\end{itemize}
+
+\textbf{IRLS 算法步骤：}
+
+\begin{enumerate}
+\item 选择 $\beta$ 的初始估计 $\hat{\beta}^{(0)}$，代入可得 $\mu_i^{(0)}$，$W_i^{(0)}$
+
+\item 对于第 $k$ 次迭代（$k\in\mathbb{N}_+$）：
+  \[
+  z_i^{(k)} = g'(\mu_i^{(k)})\bigl(Y_i - \mu_i^{(k)}\bigr) + x_i^T\hat{\beta}^{(k)}
+  = \frac{1}{\mu_i^{(k)}} + \frac{1}{(\mu_i^{(k)})^2}\bigl(y_i - \mu_i^{(k)}\bigr)
+  \]
+
+\item 更新：
+  \[
+  \hat{\beta}^{(k+1)} = \bigl(X^T W^{(k)} X\bigr)^{-1} X^T W^{(k)} z^{(k)}
+  \]
+
+\item 重复进行直到收敛或达到最大迭代次数，最后得到 $\hat{\beta}$
+\end{enumerate}
+
+\bigskip
+
+\item[(b)] \textbf{Derive the variance estimator for $\hat{\beta}$.}
+
+\textbf{Solution:}
+
+最终得到
+\[
+\text{Var}(\hat{\beta}) = I_n^{-1}(\beta) = \phi\,(X^T W X)^{-1}
+\]
+
+即
+\[
+\boxed{\widehat{\text{Var}}(\hat{\beta}) = \frac{1}{\alpha}\bigl(X^T \hat{W} X\bigr)^{-1}}
+\]
+
+\end{enumerate}
+
+%======================================================================
+\subsection{Problem 3}
+%======================================================================
+
+\textbf{Conduct simulation studies for Gamma Regression models. Simulate the data using the R code provided in class.}
+
+\begin{enumerate}
+\item[(a)] \textbf{Fit the Gamma regression model using the IRLS algorithm and estimate the variance of your MLE, both having been derived in Problem 2. Evaluate the performance of your formulas using the following metrics.}
+
+\begin{enumerate}
+\item[i.] Compare your $\hat{\beta}_2$ and your variance of $\hat{\beta}_2$ to those obtained from the \texttt{glm(..., family=Gamma(link="inverse"), ...)} function in R.
+\item[ii.] Evaluate the bias of $\hat{\beta}_2$.
+\item[iii.] Compare the mean of the estimated variance for $\hat{\beta}_2$ and the empirical variance of $\hat{\beta}_2$ based on 10,000 simulations.
+\item[iv.] Form the 95\% confidence interval and assess its coverage based on 10,000 simulations.
+\end{enumerate}
+
+\textbf{Solution:}
+
+使用 \texttt{link="inverse"}（canonical link）：
+
+\begin{itemize}
+\item true $\beta_2 = 0$, $\text{mean}(\hat{\beta}_2) = -0.0006109$
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lr}
+\toprule
+Evaluation Metric & Value \\
+\midrule
+bias of $\hat{\beta}_2$ & $-0.0006109$ \\
+mean of estimated SE & $0.1096$ \\
+mean of estimated variance & $0.01203$ \\
+empirical SE & $0.1103$ \\
+empirical variance & $0.01217$ \\
+average 95\% CI & $[-0.2154,\ 0.2142]$ \\
+coverage & $0.9472$ \\
+power & $0.0528$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent bias接近0，方差相近，95\%CI覆盖了约95\%的simulation $\beta_2$，power（此处指 type I error）接近0.05，说明 simulation 结果与计算相符。
+
+\bigskip
+
+\item[(b)] \textbf{Examine the impact of mis-specification of the link function: simulate data under the inverse link function and analyze data using the log link. Evaluate the bias, variance, and coverage of 95\% confidence interval as in 3(a) ii--iv.}
+
+\textbf{Solution:}
+
+使用 \texttt{link="log"}（错误的 link function）：
+
+\begin{itemize}
+\item true $\beta_2 = 0$, $\text{mean}(\hat{\beta}_2) = 0.0006383$
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lr}
+\toprule
+Evaluation Metric & Value \\
+\midrule
+bias of $\hat{\beta}_2$ & $0.0006383$ \\
+mean of estimated SE & $0.1095$ \\
+mean of estimated variance & $0.01200$ \\
+empirical SE & $0.1103$ \\
+empirical variance & $0.01217$ \\
+average 95\% CI & $[-0.2140,\ 0.2152]$ \\
+coverage & $0.9459$ \\
+power & $0.0541$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent bias接近0，方差相近，95\%CI覆盖了约95\%的simulation $\beta_2$，power（此处指 type I error）接近0.05，说明虽然使用了错误的 link function 但是 simulation 结果与计算相符。
+
+我尝试给出如下解释：给出的代码中 $\beta_2^{true}=0$，即实际上 $Y$ 与 $X$ 独立，于是两个模型都可拟合。如果我们手动将生成数据的 $\beta$ 进行修改，如令 $\beta_2^{true}=0.05$，\texttt{link="log"}，则 $\text{bias}=-0.09815$，显著变大；$\text{coverage}=0.8534$，与95\%相差较远，$\text{power}=0.07$。这说明模型假设错误。（此时若使用典范链接，coverage仍然接近0.95，二者 power 均约为0.07）
+
+\end{enumerate}
+
+\bigskip
+
+\noindent\textbf{本题所使用的代码：}
+
+\begin{lstlisting}
+n.sim = 10000                 # number of simulated replicates of data
+n.obs = 1000                   # sample size in each dataset
+
+beta2.true = 0                 # beta for x
+# b问中换为0.05, 0.1进行测试
+beta.true = c(1, beta2.true)   # beta for (intercept, x)
+
+beta.hat = rep(NA, n.sim)
+beta.SEE = rep(NA, n.sim)
+beta.var = rep(NA, n.sim)
+beta.CI.upper = rep(NA, n.sim)
+beta.CI.lower = rep(NA, n.sim)
+Wald.stat = rep(NA, n.sim)
+
+set.seed(123)
+
+for (i in 1:n.sim) {
+
+    if (i%%1000 == 0) print(i)
+
+    #--------------------------------
+    # simulate data
+    #--------------------------------
+
+    x = runif(n=n.obs, min=0, max=1)
+    eta = cbind(1, x) %*% beta.true
+    mu = 1/eta
+    y = rgamma(n=n.obs, shape=1, scale=mu)
+
+    #--------------------------------
+    # analyze data
+    #--------------------------------
+
+    # (a)
+    # res = glm(y~x, family=Gamma(link="inverse"), start=c(1,0))
+
+    # 更换为(b)要求的link
+    res = glm(y~x, family=Gamma(link="log"), start=c(1,0))
+
+    #--------------------------------
+    # save results for each dataset
+    #--------------------------------
+
+    res.coef = coef(summary(res))
+    beta.hat[i] = res.coef[2,1]
+    beta.SEE[i] = res.coef[2,2]
+    beta.var[i] = beta.SEE[i]^2
+    beta.CI.upper[i] = res.coef[2,1] + 1.96*res.coef[2,2]
+    beta.CI.lower[i] = res.coef[2,1] - 1.96*res.coef[2,2]
+    Wald.stat[i] = res.coef[2,1] / res.coef[2,2]
+}
+
+#--------------------------------
+# summarize results
+#--------------------------------
+
+beta2.bias = mean(beta.hat) - beta2.true
+beta2.SEE = mean(beta.SEE)
+beta2.SE = sd(beta.hat)
+beta2.var = var(beta.hat)
+mean_var = mean(beta.var)
+mean_lower = mean(beta.CI.lower)
+mean_upper = mean(beta.CI.upper)
+beta2.CR = mean(beta.CI.lower <= beta2.true &
+                beta2.true <= beta.CI.upper)
+beta2.power = mean(abs(Wald.stat) >= 1.96)
+
+#--------------------------------
+# print results
+#--------------------------------
+
+print(c(mean(beta.hat), beta2.true))
+beta2.var
+mean_var
+mean_lower
+mean_upper
+tab = c("bias", "SEE", "SE", "coverage", "power")
+tab = rbind(tab, c(beta2.bias, beta2.SEE, beta2.SE,
+                    beta2.CR, beta2.power))
+tab
+\end{lstlisting}
+
+%======================================================================
+\subsection{Problem 4}
+%======================================================================
+
+\textbf{What are the forms of the Deviance (in terms of $\mu_i$) for the following distributions:}
+
+\begin{enumerate}
+\item[(a)] \textbf{Independent variables $Y_1,Y_2,\ldots,Y_n$ follow the inverse Gaussian distribution with the density function}
+\[
+f(y_i;\mu_i,\sigma) = \frac{1}{\sqrt{2\pi y_i^3\,\sigma^2}}\exp\!\left\{\frac{-(y_i-\mu_i)^2}{2(\mu_i\sigma)^2 y_i}\right\} \quad \text{for } y_i > 0,
+\]
+\textbf{where $\sigma$ is a fixed constant and $\mu_i$ is the parameter of interest.}
+
+\textbf{Solution:}
+
+\[
+D = 2\sum_{i=1}^n\bigl[\tilde{\ell}(y_i) - \hat{\ell}(y_i)\bigr]
+\]
+
+其中 $\tilde{\ell}$ 指 Saturated model，有 $\tilde{\mu}_i = y_i$。
+
+log likelihood：
+\[
+\ell = \exp\!\left[-\frac{(y_i-\mu_i)^2}{2(\mu_i\sigma)^2 y_i} - \frac{1}{2}\log(2\pi y_i^3\sigma^2)\right], \quad \sigma \text{ 已知}
+\]
+
+\[
+\boxed{D = 2\sum_{i=1}^n \frac{(y_i - \hat{\mu}_i)^2}{2(\hat{\mu}_i\,\sigma)^2\,y_i} = \frac{1}{\sigma^2}\sum_{i=1}^n \frac{(y_i - \hat{\mu}_i)^2}{\hat{\mu}_i^2\,y_i}}
+\]
+
+\bigskip
+
+\item[(b)] \textbf{Independent variables $Y_1,Y_2,\ldots,Y_n$ follow the Gamma($\mu_i,\alpha$) distribution with the density function}
+\[
+f(y_i;\mu_i,\alpha) = \frac{1}{\Gamma(\alpha)(\mu_i/\alpha)^\alpha}\, y_i^{\alpha-1}\exp(-\alpha y_i/\mu_i) \quad \text{for } y_i > 0,
+\]
+\textbf{where $\alpha$ is a fixed constant and $\mu_i$ is the parameter of interest.}
+
+\textbf{Solution:}
+
+log likelihood：
+\[
+\ell = -\alpha\frac{y_i}{\mu_i} - (\alpha-1)\log y_i - \log\Gamma(\alpha) - \alpha\log\frac{\mu_i}{\alpha}
+\]
+
+\[
+D = 2\sum_{i=1}^n\left[-\alpha\!\left(1 - \frac{y_i}{\hat{\mu}_i}\right) - \alpha\log\frac{y_i}{\hat{\mu}_i}\right]
+\]
+
+\[
+\boxed{D = 2\alpha\sum_{i=1}^n\left[\frac{y_i}{\hat{\mu}_i} - 1 + \log\frac{\hat{\mu}_i}{y_i}\right]}
+\]
+
+\end{enumerate}

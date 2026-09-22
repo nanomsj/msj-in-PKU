@@ -1,0 +1,116 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[margin=1.8cm]{geometry}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{titlesec}
+
+% 紧凑行距
+\linespread{1.1}
+\setlength{\parskip}{0.3em}
+\sloppy
+
+% section字号
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+% listings设置
+\lstset{
+  language=R,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red},
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  xleftmargin=2em,
+  xrightmargin=1em,
+  aboveskip=0.5em,
+  belowskip=0.5em
+}
+
+% 超链接
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue
+}
+
+\title{\textbf{Biostatistics Homework} \\ \small 26 Spring, Peking University}
+\author{msj}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\footnotesize
+\textit{本文件由 AI（opencode / MiMo v2.5-free）将手写作业识别并自动编译生成，可能存在识别错误，仅供参考。}
+\end{center}
+
+\newpage
+\tableofcontents
+\newpage
+
+%% ===== HW1 =====
+\section{Homework 1: Visualization}
+略。
+
+\newpage
+
+%% ===== HW2 =====
+\input{hw2.tex}
+
+\newpage
+
+%% ===== HW3 =====
+\input{hw3.tex}
+
+\newpage
+
+%% ===== HW4 =====
+\section{Homework 4: Linear Models}
+\input{hw4_content.tex}
+
+\newpage
+
+%% ===== HW5 =====
+\section{Homework 5: Generalized Linear Models 1}
+\input{hw5_content.tex}
+
+\newpage
+
+%% ===== HW6 =====
+\section{Homework 6: Generalized Linear Models 2}
+\input{hw6_content.tex}
+
+\newpage
+
+%% ===== HW7 =====
+\section{Homework 7: Longitudinal Data Analysis}
+\input{hw7_content.tex}
+
+\newpage
+
+%% ===== HW8 =====
+\section{Homework 8: Survival Analysis}
+\input{hw8_content.tex}
+
+\newpage
+
+%% ===== HW9 =====
+\section{Homework 9: Multiple Testing}
+略。
+
+\end{document}
